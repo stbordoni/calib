@@ -53,6 +53,14 @@ def compute_offset(df, calib):
     return df
 
 
+def convertADC(df ):
+    df.copy()
+    df['ADCmin_conv'] = df['ADCmin']* 1.8409e-3
+    df['ADCmax_conv'] = df['ADCmax']* 1.8409e-3
+
+    return df
+
+
 def get_USig_gain(df):
     df = df.copy()
     df['Gain_Usig HV'] = df['Gain HV'].apply(lambda x: math.ceil((x* 32768)))
