@@ -76,14 +76,22 @@ def get_Sig_offset(df):
     return df
 
 
+def tohextwocompl(val, nbits):
+    return hex((val + (1 << nbits)) % (1<<nbits) ) 
+
+
+def tohex_16bitsrange02(val):
+    return hex((2* val /65536) ) 
+
+
 def convert_to_exadec(df):
     df = df.copy()
 
     df['Gain_Usig BiasV'] = df['Gain_Usig BiasV'].apply(lambda x : hex(x) )
     df['Gain_Usig HV'] = df['Gain_Usig HV'].apply(lambda x : hex(x) )
 
-    df['Offset_Sig BiasV'] = df['Offset_Sig BiasV'].apply(lambda x : hex(x) )
-    df['Offset_Sig HV'] = df['Offset_Sig HV'].apply(lambda x : hex(x) )
+    df['Offset_Sig BiasV'] = df['Offset_Sig BiasV'].apply(lambda x : tohextwocompl(x,16) )
+    df['Offset_Sig HV'] = df['Offset_Sig HV'].apply(lambda x : tohextwocompl(x,16) )
 
 
     return df
