@@ -70,8 +70,8 @@ def get_USig_gain(df):
 
 def get_Sig_offset(df):
     df= df.copy()
-    df['Offset_Sig HV'] = df['offset HV'].apply(lambda x: math.ceil(x) ) 
-    df['Offset_Sig BiasV'] = df['offset BiasV'].apply(lambda x: math.ceil(x) ) 
+    df['Offset_Sig HV'] = df['offset HV'].apply(lambda x: round(x) ) 
+    df['Offset_Sig BiasV'] = df['offset BiasV'].apply(lambda x: round(x) ) 
 
     return df
 
