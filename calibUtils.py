@@ -77,15 +77,23 @@ def HV_params(df):
  """
 
 def convertADC(df ):
-    df.copy()
+    df = df.copy()
     df['ADCmin_conv'] = df['ADCmin']* 1.8409e-3
     df['ADCmax_conv'] = df['ADCmax']* 1.8409e-3
 
     return df
 
+def convertADC_BiasV(df ):
+    df= df.copy()
+    df['ADCmin_conv'] = 108.7677 + df['ADCmin']* 1.535e-3
+    df['ADCmax_conv'] = 108.7677 + df['ADCmax']* 1.535e-3
+
+    return df
+
+
 
 def code_offsetandgain(df, calib):
-    df = convertADC(df)
+    df = df.copy()
 
     if (calib == 'biasV'):
         df['Gain_Usig BiasV'] = df['Gain BiasV'].apply(lambda x: math.ceil((x* 32768)))
@@ -130,10 +138,10 @@ def convert_to_exadec(df,calib):
     df = df.copy()
     if (calib == 'biasV'):
         df['Gain_Usig BiasV'] = df['Gain_Usig BiasV'].apply(lambda x : hex(x) )
-        df['Offset_Sig BiasV'] = df['Offset_Sig BiasV'].apply(lambda x : tohextwocompl(x,16) )
+        df['Offset_Sig BiasV'] = df['Offset_Sig BiasV'].apply(lambda x : tohextwocompl(x,15) )
     elif(calib=='HV'):
         df['Gain_Usig HV'] = df['Gain_Usig HV'].apply(lambda x : hex(x) )
-        df['Offset_Sig HV'] = df['Offset_Sig HV'].apply(lambda x : tohextwocompl(x,16) )
+        df['Offset_Sig HV'] = df['Offset_Sig HV'].apply(lambda x : tohextwocompl(x,15) )
     else:
         print('calib not found, please put either BiasV or HV')
         abort()
