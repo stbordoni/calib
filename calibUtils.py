@@ -96,11 +96,13 @@ def code_offsetandgain(df, calib):
     df = df.copy()
 
     if (calib == 'biasV'):
-        df['Gain_Usig BiasV'] = df['Gain BiasV'].apply(lambda x: math.ceil((x* 32768)))
+        #df['Gain_Usig BiasV'] = df['Gain BiasV'].apply(lambda x: math.ceil((x* 32768)))
+        df['Gain_Usig BiasV'] = df['Gain BiasV'].apply(lambda x: round((x* 32768)))
         df['Offset_Sig BiasV'] = df['offset BiasV'].apply(lambda x: round(x) ) 
     
     elif (calib == 'HV'):
-        df['Gain_Usig HV'] = df['Gain HV'].apply(lambda x: math.ceil((x* 32768)))
+        #df['Gain_Usig HV'] = df['Gain HV'].apply(lambda x: math.ceil((x* 32768)))
+        df['Gain_Usig HV'] = df['Gain HV'].apply(lambda x: round((x* 32768)))
         df['Offset_Sig HV'] = df['offset HV'].apply(lambda x: round(x) ) 
 
     else:
