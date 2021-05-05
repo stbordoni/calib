@@ -18,7 +18,7 @@ def biasV_params(df):
     b_coeff = 0
         
     df['Gain BiasV'] = (df['DMMmax'] - df['DMMmin']) / (df['ADCmax'] - df['ADCmin'] ) * 1/a_coeff
-    df['offset BiasV'] = df['ADCmin'] - (df['DMMmin'] - b_coeff )/ (df['Gain BiasV'] * a_coeff )
+    df['offset BiasV'] =  (df['DMMmin'] - b_coeff )/ (df['Gain BiasV'] * a_coeff ) - df['ADCmin']
 
     return df
 
@@ -30,7 +30,7 @@ def HV_params(df):
     b_coeff = 0
         
     df['Gain HV'] = (df['DMMmax'] - df['DMMmin']) / (df['ADCmax'] - df['ADCmin'] ) * 1/a_coeff
-    df['offset HV'] = df['ADCmin'] - (df['DMMmin'] - b_coeff )/ (df['Gain HV'] * a_coeff)
+    df['offset HV'] = (df['DMMmin'] - b_coeff )/ (df['Gain HV'] * a_coeff) -  df['ADCmin'] 
 
     return df
 
@@ -140,10 +140,10 @@ def convert_to_exadec(df,calib):
     df = df.copy()
     if (calib == 'biasV'):
         df['Gain_Usig BiasV'] = df['Gain_Usig BiasV'].apply(lambda x : hex(x) )
-        df['Offset_Sig BiasV'] = df['Offset_Sig BiasV'].apply(lambda x : tohextwocompl(x,15) )
+        df['Offset_Sig BiasV'] = df['Offset_Sig BiasV'].apply(lambda x : tohextwocompl(x,16) )
     elif(calib=='HV'):
         df['Gain_Usig HV'] = df['Gain_Usig HV'].apply(lambda x : hex(x) )
-        df['Offset_Sig HV'] = df['Offset_Sig HV'].apply(lambda x : tohextwocompl(x,15) )
+        df['Offset_Sig HV'] = df['Offset_Sig HV'].apply(lambda x : tohextwocompl(x,16) )
     else:
         print('calib not found, please put either BiasV or HV')
         abort()
