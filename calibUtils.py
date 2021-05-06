@@ -14,10 +14,10 @@ def hex_to_dec(df) :
 def biasV_params(df):
     df = df.copy()
 
-    a_coeff = 1.8409e-3
+    a_coeff = 1.8535e-3
     b_coeff = 0
         
-    df['Gain BiasV'] = (df['DMMmax'] - df['DMMmin']) / (df['ADCmax'] - df['ADCmin'] ) * 1/a_coeff
+    df['Gain BiasV'] = (df['DMMmax'] - df['DMMmin']) / (df['ADCmax'] - df['ADCmin'] )/ a_coeff
     df['offset BiasV'] =  (df['DMMmin'] - b_coeff )/ (df['Gain BiasV'] * a_coeff ) - df['ADCmin']
 
     return df
@@ -26,10 +26,10 @@ def biasV_params(df):
 def HV_params(df):
     df = df.copy()
 
-    a_coeff = 1.8535e-3
+    a_coeff = 1.8409e-3
     b_coeff = 0
         
-    df['Gain HV'] = (df['DMMmax'] - df['DMMmin']) / (df['ADCmax'] - df['ADCmin'] ) * 1/a_coeff
+    df['Gain HV'] = (df['DMMmax'] - df['DMMmin']) / (df['ADCmax'] - df['ADCmin'] ) /a_coeff
     df['offset HV'] = (df['DMMmin'] - b_coeff )/ (df['Gain HV'] * a_coeff) -  df['ADCmin'] 
 
     return df
