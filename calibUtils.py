@@ -151,15 +151,23 @@ def convert_to_exadec(df,calib):
     return df
 
 
-#def convert_to_exadec(df):
-#    df = df.copy()
+def testcalib_biasV(df):
+    df = df.copy()
+    a_coeff = 1.8535e-3
+    b_coeff = 0
+    LSBres = 1.8535e-3
 
-#    df['Gain_Usig BiasV'] = df['Gain_Usig BiasV'].apply(lambda x : hex(x) )
-#    df['Gain_Usig HV'] = df['Gain_Usig HV'].apply(lambda x : hex(x) )
+    #compute ADC calibrated value in dec
+    df['ADCcalmin'] = (df['ADCmin'] + df['Offset_Sig BiasV']) * (df['Gain_Usig BiasV'] /32768) * a_coeff + b_coeff
+    df['ADCcalmax'] = (df['ADCmax'] + df['Offset_Sig BiasV']) * (df['Gain_Usig BiasV'] /32768) * a_coeff + b_coeff
 
-#    df['Offset_Sig BiasV'] = df['Offset_Sig BiasV'].apply(lambda x : tohextwocompl(x,16) )
-#    df['Offset_Sig HV'] = df['Offset_Sig HV'].apply(lambda x : tohextwocompl(x,16) )
+    #compare with the DMM value
+    df['ADCmin err'] = df['DMMmin']-df['ADCcalmin']
+    df['ADCmax err'] = df['DMMmax']-df['ADCcalmax']    
 
+    #compute error 
+    df['ADCmin sigma '] = df['ADCmin err']/LSBres
+    df['ADCmax sigma '] = df['ADCmax err']/LSBres
 
-#    return df
+    return df
     
