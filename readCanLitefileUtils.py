@@ -224,3 +224,7 @@ def Getch_average(chlist):
 
 def printhex(myhex):
     print(myhex[2:])
+
+def trunchex(myhex):
+    return (myhex[2:]) 
+    
