@@ -6,4 +6,6 @@ __pycache/
 files/*csv
 files/*xlsx
 *.pyc
+*txt
+*.csv
 calibDB/
