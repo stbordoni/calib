@@ -75,7 +75,7 @@ def readfile(filein):
 # define a function which for cases of 4lines answers, 
 # returns a list of list recording the values per channel 
 
-def myfunc(answ, list_ch):
+def ExtractCh_4linesansw(answ, list_ch):
     
     if (len(answ) !=4): abort
 
@@ -126,7 +126,7 @@ def getDACsetperchannel(mylist):
             #add all channel to the list of list to return
             l_allch.extend([l_ch0,l_ch1,l_ch2,l_ch3, l_ch4, l_ch5, l_ch6, l_ch7, l_ch8, l_ch9, l_ch10, l_ch11])
     
-            list_ch_dacset = myfunc(answ, l_allch)
+            list_ch_dacset = ExtractCh_4linesansw(answ, l_allch)
 
             #print(list_ch_dacset)
             #print('now find which DACset we have: ')
