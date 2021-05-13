@@ -105,6 +105,10 @@ def ExtractCh_4linesansw(answ, list_ch):
 
     return list_ch
 
+
+
+
+
 #define a function which take in input a list of dictionary and 
 # search for the request 0105 (DACset) to define the setting point for the following measurements 
 
@@ -156,7 +160,6 @@ def getADCperchannel(mylist):
     # define the list of list which will contain all the list of single channels values recording their ADC values
     l_allch = []
 
-
     #add all channel to the list of list to return
     l_allch.extend([l_ch0,l_ch1,l_ch2,l_ch3, l_ch4, l_ch5, l_ch6, l_ch7, l_ch8, l_ch9, l_ch10, l_ch11])
 
@@ -165,37 +168,7 @@ def getADCperchannel(mylist):
         if (d.get('mssg')=='0105'):
             answ = d.get('answer')
 
-            #check if the lenght is ok (it should be a list of 4 elements)
-            if (len(answ) !=4): abort
-
-            for answ_items in answ:
-                answ_items = answ_items.split(' ')
-                #print(answ_items)            
-
-                if (answ_items[0] == '01'):
-                    l_ch0.append(answ_items[2]+answ_items[4])
-                    l_ch1.append(answ_items[6]+answ_items[8])
-                    l_ch2.append(answ_items[10]+answ_items[12])
-
-                elif (answ_items[0] == '21'):
-                    l_ch3.append(answ_items[2]+answ_items[4])
-                    l_ch4.append(answ_items[6]+answ_items[8])
-                    l_ch5.append(answ_items[10]+answ_items[12])
-                
-                elif (answ_items[0] == '41'):
-                    l_ch6.append(answ_items[2]+answ_items[4])
-                    l_ch7.append(answ_items[6]+answ_items[8])
-                    l_ch8.append(answ_items[10]+answ_items[12])
-
-                elif (answ_items[0] == '61'):
-                    l_ch9.append(answ_items[2]+answ_items[4])
-                    l_ch10.append(answ_items[6]+answ_items[8])
-                    l_ch11.append(answ_items[10]+answ_items[12])
-            
-            #print(l_ch9)
-
-    #add all channel to the list of list to return
-    #l_allch.extend([l_ch0,l_ch1,l_ch2,l_ch3, l_ch4, l_ch5, l_ch6, l_ch7, l_ch8, l_ch9, l_ch10, l_ch11])
+            l_allch = ExtractCh_4linesansw(answ, l_allch)
 
     #return the list of list
     return(l_allch)    
