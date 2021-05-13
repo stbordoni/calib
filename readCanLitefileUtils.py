@@ -72,8 +72,72 @@ def readfile(filein):
     return my_d_list
 
 
+# define a function which for cases of 4lines answers, 
+# returns a list of list recording the values per channel 
+
+def myfunc(answ, list_ch):
+    
+    if (len(answ) !=4): abort
+
+    for answ_items in answ:
+        answ_items = answ_items.split(' ')
+        
+        if (answ_items[0] == '01'):
+            list_ch[0].append(answ_items[2]+answ_items[4])
+            list_ch[1].append(answ_items[6]+answ_items[8])
+            list_ch[2].append(answ_items[10]+answ_items[12])
+
+        elif (answ_items[0] == '21'):
+            list_ch[3].append(answ_items[2]+answ_items[4])
+            list_ch[4].append(answ_items[6]+answ_items[8])
+            list_ch[5].append(answ_items[10]+answ_items[12])
+        
+        elif (answ_items[0] == '41'):
+            list_ch[6].append(answ_items[2]+answ_items[4])
+            list_ch[7].append(answ_items[6]+answ_items[8])
+            list_ch[8].append(answ_items[10]+answ_items[12])
+
+        elif (answ_items[0] == '61'):
+            list_ch[9].append(answ_items[2]+answ_items[4])
+            list_ch[10].append(answ_items[6]+answ_items[8])
+            list_ch[11].append(answ_items[10]+answ_items[12])
+    
+
+    return list_ch
+
+#define a function which take in input a list of dictionary and 
+# search for the request 0105 (DACset) to define the setting point for the following measurements 
+
+def getDACsetperchannel(mylist):
+    for d in mylist:
+        if (d.get('mssg')=='0104'):
+            answ = d.get('answer')
+
+            #create the dictionary which will collect all the channels infos
+            l_ch0, l_ch1, l_ch2 = [], [], []
+            l_ch3, l_ch4, l_ch5 = [], [], []
+            l_ch6, l_ch7, l_ch8 = [], [], []
+            l_ch9, l_ch10, l_ch11 = [], [], []
+
+            # define the list of list which will contain all the list of single channels values recording their ADC values
+            l_allch = []
 
 
+            #add all channel to the list of list to return
+            l_allch.extend([l_ch0,l_ch1,l_ch2,l_ch3, l_ch4, l_ch5, l_ch6, l_ch7, l_ch8, l_ch9, l_ch10, l_ch11])
+    
+            list_ch_dacset = myfunc(answ, l_allch)
+
+            #print(list_ch_dacset)
+            #print('now find which DACset we have: ')
+            mych_average_dacset = Getch_average(list_ch_dacset)    
+
+            areallthesame = all(x==mych_average_dacset[0] for x in mych_average_dacset)
+
+            if (areallthesame == True ):
+                DACset = mych_average_dacset[0]
+
+    return DACset
 
 
 #define a function which take in input a list of dictionary and 
@@ -91,6 +155,11 @@ def getADCperchannel(mylist):
 
     # define the list of list which will contain all the list of single channels values recording their ADC values
     l_allch = []
+
+
+    #add all channel to the list of list to return
+    l_allch.extend([l_ch0,l_ch1,l_ch2,l_ch3, l_ch4, l_ch5, l_ch6, l_ch7, l_ch8, l_ch9, l_ch10, l_ch11])
+
 
     for d in mylist:
         if (d.get('mssg')=='0105'):
@@ -126,7 +195,7 @@ def getADCperchannel(mylist):
             #print(l_ch9)
 
     #add all channel to the list of list to return
-    l_allch.extend([l_ch0,l_ch1,l_ch2,l_ch3, l_ch4, l_ch5, l_ch6, l_ch7, l_ch8, l_ch9, l_ch10, l_ch11])
+    #l_allch.extend([l_ch0,l_ch1,l_ch2,l_ch3, l_ch4, l_ch5, l_ch6, l_ch7, l_ch8, l_ch9, l_ch10, l_ch11])
 
     #return the list of list
     return(l_allch)    
@@ -152,7 +221,10 @@ def tohex(n):
 
 def Getch_average(chlist):
     chlist = chlist.copy()
-    print(len(chlist))
+    
+    #check the length of the list, if different from 12, abort
+    if (len(chlist)!=12): abort
+    #print(len(chlist))
     
     ch_avg_dec = []
     ch_avg_hex = []
@@ -161,7 +233,7 @@ def Getch_average(chlist):
 
         # convert any elements of the channel list to decimal
         singlech_dec = list(map(todec, ch))
-        print(singlech_dec)
+        #print(singlech_dec)
         
         #compute the average
         ch_avg = statistics.mean(singlech_dec)
@@ -170,13 +242,12 @@ def Getch_average(chlist):
         #print(list(singlech_dec))
         #print(singlech_avg)
 
-    print(ch_avg_dec)
+    #print(ch_avg_dec)
     #convert back to hex and save to a list which will be our final output
     ch_avg_hex = list(map(tohex, ch_avg_dec))
-    print(ch_avg_hex)
+    #print(ch_avg_hex)
     return ch_avg_hex
 
 
-
-    def printhex(myhex):
+def printhex(myhex):
     print(myhex[2:])
