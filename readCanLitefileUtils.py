@@ -1,8 +1,35 @@
 import numpy as np
 import matplotlib
 import statistics
+import pandas as pd
+
+def GetADCvalues(file_DACset):
+
+    tmp_df = pd.read_csv(file_DACset)
+
+    #remove some columns not exploitable
+    tmp_df.drop(['Bus','No', 'ID (hex)', 'Message', 'ASCII'], inplace=True, axis=1)
+
+    #save dataframe in a file to be read by the script
+    filename = file_DACset.split('/')[2]
+    tmp_filename = 'calibfile_fromscript_'+ filename+'.txt'
+    tmp_df.to_csv(tmp_filename, sep=',', index=False, header=False, quotechar = ' ')
+
+    #open file to read
+    infile = open(tmp_filename, 'r')
+
+    #call function which read the file and return the content ordered in a list of dictionaries
+    d_list = readfile(infile)
+
+    DACset = getDACsetperchannel(d_list)
+    DACset
+
+    my_allch_list = getADCperchannel(d_list)
+    mych_average_biasV = Getch_average(my_allch_list)
+    hexprint = list(map(trunchex, mych_average_biasV))
 
 
+    return DACset, hexprint
 
 # define a function which reads the file and return a list of dictionaries contaning all requests and answers organised 
 # the final format of each list item is a dictionary with the following structure:
@@ -226,5 +253,5 @@ def printhex(myhex):
     print(myhex[2:])
 
 def trunchex(myhex):
-    return (myhex[2:]) 
+    return (myhex[2:])
     
