@@ -21,15 +21,16 @@ def GetADCvalues(file_DACset):
     #call function which read the file and return the content ordered in a list of dictionaries
     d_list = readfile(infile)
 
-    DACset = getDACsetperchannel(d_list)
-    DACset
+    DAC_set = getDACsetperchannel(d_list)
+    DAC_set
 
     my_allch_list = getADCperchannel(d_list)
     mych_average_biasV = Getch_average(my_allch_list)
     hexprint = list(map(trunchex, mych_average_biasV))
 
+    HV = getHV(d_list)
 
-    return DACset, hexprint
+    return DAC_set, hexprint, HV
 
 # define a function which reads the file and return a list of dictionaries contaning all requests and answers organised 
 # the final format of each list item is a dictionary with the following structure:
@@ -160,15 +161,18 @@ def getDACsetperchannel(mylist):
             list_ch_dacset = ExtractCh_4linesansw(answ, l_allch)
 
             #print(list_ch_dacset)
+            
             #print('now find which DACset we have: ')
             mych_average_dacset = Getch_average(list_ch_dacset)    
 
-            areallthesame = all(x==mych_average_dacset[0] for x in mych_average_dacset)
+    areallthesame = all(x==mych_average_dacset[0] for x in mych_average_dacset)
 
-            if (areallthesame == True ):
-                DACset = mych_average_dacset[0]
+    if (areallthesame == True ):
+        DAC_set = mych_average_dacset[0]
+    else:
+        DAC_set = 9999
 
-    return DACset
+    return DAC_set
 
 
 #define a function which take in input a list of dictionary and 
@@ -199,6 +203,59 @@ def getADCperchannel(mylist):
 
     #return the list of list
     return(l_allch)    
+
+
+def GetHVvalue(myfile):
+
+    tmp_df = pd.read_csv(myfile)
+
+    #remove some columns not exploitable
+    tmp_df.drop(['Bus','No', 'ID (hex)', 'Message', 'ASCII'], inplace=True, axis=1)
+
+    #save dataframe in a file to be read by the script
+    filename = myfile.split('/')[2]
+    tmp_filename = 'HVcalibfile_fromscript_'+ filename+'.txt'
+    tmp_df.to_csv(tmp_filename, sep=',', index=False, header=False, quotechar = ' ')
+
+    #open file to read
+    infile = open(tmp_filename, 'r')
+
+    #call function which read the file and return the content ordered in a list of dictionaries
+    d_list = readfile(infile)
+
+    HV = getHV(d_list)
+    return HV
+
+
+def getHV(mylist):
+
+    mylist = mylist.copy()
+
+    list_HV = []
+
+    for d in mylist:
+        
+        if (d.get('mssg')=='0100'):
+            answ = d.get('answer')
+            #print(answ)
+
+            if (len(answ) !=2): abort
+
+            for answ_items in answ:
+                answ_items = answ_items.split(' ')
+
+                if (answ_items[0] == '01'):
+                    list_HV.append(answ_items[2]+answ_items[4])
+
+
+    #print(list_HV)
+    list_HV_dec = map(todec, list_HV )
+    HV_avg = statistics.mean(list_HV_dec)
+    HV_hex = tohex(HV_avg)
+
+
+    return  HV_hex
+
 
 
 
