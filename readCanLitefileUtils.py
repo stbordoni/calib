@@ -1,7 +1,9 @@
 import numpy as np
 import matplotlib
+import matplotlib.pyplot as plt
 import statistics
 import pandas as pd
+
 
 def GetADCvalues(file_DACset):
 
@@ -25,9 +27,17 @@ def GetADCvalues(file_DACset):
     DAC_set
 
     my_allch_list = getADCperchannel(d_list)
+
+    #draw the distribution of the ADC values per channel
+    drawADCperch(my_allch_list)
+
+    #get the average per channel
     mych_average_biasV = Getch_average(my_allch_list)
+    
+    #convert to hex
     hexprint = list(map(trunchex, mych_average_biasV))
 
+    #extract HV value
     HV = getHV(d_list)
 
     return DAC_set, hexprint, HV
@@ -312,3 +322,47 @@ def printhex(myhex):
 def trunchex(myhex):
     return (myhex[2:])
     
+
+
+def drawADCperch(l_chlist):
+
+    l_chlist = l_chlist.copy()
+
+    plt.figure(figsize=(25,15))
+    ax = plt.gca()
+
+    chnb=0
+
+    for ch in l_chlist:
+
+        #print(ch)
+        # convert any elements of the channel list to decimal
+        singlech_dec = list(map(todec, ch))
+        
+        chnb = chnb + 1 
+        plt.subplot(2, 6, chnb) 
+        bins = np.arange(min(singlech_dec)-5, max(singlech_dec)+5, 1) # fixed bin size
+
+        #print(singlech_dec)
+        plt.xlim([min(singlech_dec)-5, max(singlech_dec)+5])
+        plt.hist(singlech_dec, bins=bins, alpha=0.5)
+
+        #plt.grid(b=True)
+        plt.title('Ch'+ str(chnb-1))
+        plt.xlabel('ADC [V]')
+        plt.ylabel('Counts')
+
+        
+
+    #plt.subplot(1, 2, 2) 
+    #bins = np.arange(-100, 100, 5) # fixed bin size
+
+    #plt.xlim([min(l_chlist[1])-5, max(l_chlist[1])+5])
+    #plt.hist(l_chlist[1], bins=bins, alpha=0.5)
+
+    #plt.title('Ch 1 ')
+    #plt.xlabel('ADC [V]')
+    #plt.ylabel('Counts')
+
+    plt.show()
+    return
