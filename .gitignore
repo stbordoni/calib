@@ -5,6 +5,7 @@
 __pycache/
 files/*csv
 files/*xlsx
+files/Plots/*.png
 *.pyc
 *txt
 *.csv
