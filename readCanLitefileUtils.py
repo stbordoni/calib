@@ -42,6 +42,49 @@ def GetADCvalues(file_DACset):
 
     return DAC_set, hexprint, HV
 
+
+#Here I added a possibility to calculate the RMS values of the data to the MM-Value 
+
+def GetADCvaluesRMS(file_DACset, MMchannelValues):
+
+    tmp_df = pd.read_csv(file_DACset)
+
+    #remove some columns not exploitable
+    tmp_df.drop(['Bus','No', 'ID (hex)', 'Message', 'ASCII'], inplace=True, axis=1)
+
+    #save dataframe in a file to be read by the script
+    filename = file_DACset.split('/')[2]
+    tmp_filename = 'calibfile_fromscript_'+ filename+'.txt'
+    tmp_df.to_csv(tmp_filename, sep=',', index=False, header=False, quotechar = ' ')
+
+    #open file to read
+    infile = open(tmp_filename, 'r')
+
+    #call function which read the file and return the content ordered in a list of dictionaries
+    d_list = readfile(infile)
+
+    DAC_set = getDACsetperchannel(d_list)
+    DAC_set
+
+    my_allch_list = (getADCperchannel(d_list))
+    
+
+    #draw the distribution of the ADC values per channel
+    #drawADCperch(my_allch_list)
+
+    #get the average Error per channel
+    for i in range(len(MMchannelValues)):
+        my_allch_list[i] = list(map(todec, my_allch_list[i]))
+        my_allch_list[i] = [float(x) for x in my_allch_list[i]]
+        my_allch_list[i]=np.mean(np.array(my_allch_list[i])*1.8535e-3-np.array(MMchannelValues[i]))
+        
+    mych_average_biasV = my_allch_list
+    #convert to hex
+    #hexprint = list(map(trunchex, mych_average_biasV))
+    #extract HV value
+    #HV = getHV(d_list)
+
+    return mych_average_biasV
 # define a function which reads the file and return a list of dictionaries contaning all requests and answers organised 
 # the final format of each list item is a dictionary with the following structure:
 # {'timestamp': '4346.454.319.0',
