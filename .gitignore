@@ -9,4 +9,8 @@ files/Plots/*.png
 *.pyc
 *txt
 *.csv
+*.png
+*.pdf
+*.zip
+*.jpg
 calibDB/
